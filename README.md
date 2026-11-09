@@ -2,7 +2,15 @@
 
 ![CI](https://github.com/gphuCarryU/fastapi-ml-ci/actions/workflows/ci.yml/badge.svg)
 
-A REST API that serves a scikit-learn model for classifying breast tumors as **malignant** or **benign**, built with **FastAPI**, containerized with **Docker**, and automatically linted, retrained, tested and built on every push via **GitHub Actions**.
+A REST API that serves a scikit-learn model for classifying breast tumors as **malignant** or **benign**, built with **FastAPI**, containerized with **Docker**, automatically linted, retrained, tested and built on every push via **GitHub Actions**, and deployed on **Render**.
+
+## Live Demo
+
+- **Interactive Swagger UI (`/docs`)**: [https://ml-inference-api-whwd.onrender.com/docs](https://ml-inference-api-whwd.onrender.com/docs)
+- **Health check (`/health`)**: [https://ml-inference-api-whwd.onrender.com/health](https://ml-inference-api-whwd.onrender.com/health)
+- **Model metadata & metrics (`/model/info`)**: [https://ml-inference-api-whwd.onrender.com/model/info](https://ml-inference-api-whwd.onrender.com/model/info)
+
+> **Note:** Hosted on Render's free tier, which spins down after 15 minutes of inactivity. The first request after an idle period may take ~30–50 seconds while the container wakes up.
 
 ## Highlights
 
@@ -42,6 +50,7 @@ flowchart LR
     G --> H[retrain model]
     H --> I[pytest + coverage + quality gate]
     I --> J[docker build + smoke test]
+    E -->|auto-deploy| K[Render Cloud Hosting]
 ```
 
 ## Project structure
@@ -103,7 +112,7 @@ pytest --cov=main --cov-report=term-missing
 ### Example request
 
 ```bash
-curl -X POST http://localhost:8000/predict \
+curl -X POST https://ml-inference-api-whwd.onrender.com/predict \
   -H "Content-Type: application/json" \
   -d '{"features": [17.99, 10.38, 122.8, 1001.0, 0.1184, 0.2776, 0.3001, 0.1471, 0.2419, 0.07871,
                     1.095, 0.9053, 8.589, 153.4, 0.006399, 0.04904, 0.05373, 0.01587, 0.03003, 0.006193,
@@ -124,5 +133,5 @@ curl -X POST http://localhost:8000/predict \
 ## Limitations and next steps
 
 - The dataset is small (569 samples) and well-studied; this project focuses on the **serving and MLOps workflow**, not on novel modeling. It is not a medical diagnostic tool.
-- Next steps: experiment tracking with MLflow, deployment to a cloud host, monitoring for data drift, and pushing images to a container registry.
+- Next steps: experiment tracking with MLflow, data drift monitoring, and publishing versioned images to a container registry.
 
